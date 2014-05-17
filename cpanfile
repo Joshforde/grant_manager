@@ -22,3 +22,4 @@ requires => "Text::Upskirt" => "0";
 requires => "WWW::Facebook::API" => "0";
 requires => "WebService::Rackspace::CloudFiles" => "0";
 requires => "common::sense" => "0";
+requires => "Mojolicious::Plugin::Gravatar" => "0";

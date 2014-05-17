@@ -1,6 +1,31 @@
 % layout 'default';
 % title 'Dashboard';
 
-<div class="container">
-    I'm the user dashboard, please fill me with stuff!
+<div class="row">
+    <div class="span2">
+        <h1>Dashboard</h1>
+        <h3><%= session->{name} %></h3>
+        <%= gravatar session->{username} %><br>
+    </div>
+    <div class="span6 offset1">
+        <strong>Your company</strong>
+        Tell us a bit about your company. Are you:
+        <ul>
+        <li><a href="/starting-out">just starting out</a></li>
+        <li><a href="/startup">started and try to grow</a></li>
+        <li><a href="/growth">growing and try to grow faster</a></li>
+        <li><a href="/established">well established</a></li>
+        </ul>
+        <hr>
+        <strong>Things to do</strong>
+        <p>
+        <br>
+        How about ...
+        <ul>
+            <li>Updating <a href="/profile">your profile</a></li>
+            <li>Add an image to your profile through <a href="http://en.gravatar.com/" target="_blank">Gravatar</a></li>
+        </ul>
+        </p>
+    </div>
 </div>
+

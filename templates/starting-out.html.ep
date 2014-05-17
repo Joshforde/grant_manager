@@ -1,0 +1,35 @@
+% layout 'default';
+% title 'getting started';
+
+<div class="row">
+    <div class="span2">
+        <h1>getting started</h1>
+        <h3><%= session->{name} %></h3>
+        <%= gravatar session->{username} %><br>
+    </div>
+    <div class="span6 offset1">
+        When you start it may be important to find the best place to
+        start. Not all places are equal when it comes to finding the
+        right mentors, the right investors or the best grants for your
+        project. Make sure you take a bit of time to evaluate possible
+        places to start your business in.
+
+        Tell us a bit about what you want to do:
+
+        <form class="form-horizontal well" method="post">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="name">Industry</label>
+                    <div class="controls">
+                        <input type="text" class="span4" id="industry" placeholder="IT, Agriculture, ..." name="industry">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="reset" class="btn">cancel</button>
+                    <button type="submit" class="btn btn-success">find best location</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
