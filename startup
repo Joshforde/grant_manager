@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /vagrant
+sudo cpanm -n .
+hypnotoad -f grant_finder

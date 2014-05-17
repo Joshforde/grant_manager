@@ -1,0 +1,17 @@
+[map]
+(function(doc) {
+  if (
+    doc.type == 'invite' &&
+    !doc.used
+  ) {
+    emit(doc._id, 1);
+  }
+})
+
+
+
+[params]
+name = valid
+language = javascript
+_id = _design/invites
+_rev = 1-203c5c0128275e9021ed6d1e73f8dd1f

@@ -1,0 +1,18 @@
+[map]
+(function(doc) {
+  if (
+    doc.type.match(/_page$/) &&
+    doc.active
+  ) {
+    if(doc.menu === 'on'){
+      emit(doc.path, 1);
+    }
+  }
+})
+
+
+[params]
+name = navigation
+language = javascript
+_id = _design/site
+_rev = 1-c4a9eca046bb8c3abdebc9e28c95b546

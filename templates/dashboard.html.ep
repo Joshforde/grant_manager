@@ -1,0 +1,6 @@
+% layout 'default';
+% title 'Dashboard';
+
+<div class="container">
+    I'm the user dashboard, please fill me with stuff!
+</div>
