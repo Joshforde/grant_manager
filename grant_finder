@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
+use Data::Dumper;
+use WWW::LinkedIn;
 
 my $config = plugin Config => {
     file      => 'etc/grant_finder.conf',
@@ -10,10 +12,11 @@ plugin 'CouchUser', $config->{couch};
 plugin 'CouchAuth', $config->{couch};
 plugin 'MicroPage', $config->{couch};
 plugin 'FormValidate';
+
 #plugin 'Mail', $config->{mail};
 #plugin 'Uploader';
 #plugin 'CloudFiles';
-plugin 'gravatar',        {
+plugin 'gravatar', {
     size   => 128,    #default was 80
     rating => 'X',    #default was PG
     default =>
@@ -99,7 +102,9 @@ post '/reset_password' => sub {
                 . $self->{config}->{site}->{url}
                 . "/reset_password/"
                 . $reply->{id}
-                . "\n\nCheers!\nYour '".$self->{config}->{site}->{name}."' team.\n",
+                . "\n\nCheers!\nYour '"
+                . $self->{config}->{site}->{name}
+                . "' team.\n",
         );
         $self->flash(message => "Your reset password request was sent to: "
                 . $reply->{user}->{username});
@@ -163,6 +168,23 @@ group {
     # user dashboard
     get '/dashboard' => sub {
         my $self = shift;
+
+        print Dumper($self->{app}->{config});
+
+        my $token;
+        unless ($self->session->{request_token}) {
+            my $li = WWW::LinkedIn->new(
+                consumer_key => $self->{app}->{config}->{linkedin}->{key},
+                consumer_secret => $self->{app}->{config}->{linkedin}->{secret},
+            );
+            $token = $li->get_request_token(
+                callback => "http://192.168.33.30/linkedin/");
+
+            # Save $token->{token} and $token->{secret} for later:
+            $self->session->{request_token}        = $token->{token};
+            $self->session->{request_token_secret} = $token->{secret};
+        }
+        $self->stash(token => $token);
     };
 
     get '/profile' => sub {
@@ -188,7 +210,21 @@ group {
 
     } => 'starting-out';
 
-
+    get '/linkedin' => sub {
+        my $self = shift;
+        my $li = WWW::LinkedIn->new(
+            consumer_key => $self->{app}->{config}->{linkedin}->{key},
+            consumer_secret => $self->{app}->{config}->{linkedin}->{secret},
+        );
+        my $access_token = $li->get_access_token(
+            verifier => $self->param('oauth_verifier'),
+            request_token => $self->session->{request_token},
+            request_token_secret => $self->session->{request_token_secret},
+        );
+        
+        $self->session->{linkedin} = $access_token;
+        $self->redirect_to('/dashboard');
+    };
 };
 
 # Admin section
