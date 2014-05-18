@@ -1,7 +1,7 @@
 #!/bin/sh
 
 sudo apt-get update
-sudo apt-get install -y couchdb nginx npm cpanminus
+sudo apt-get install -y couchdb nginx npm cpanminus libexpat1-dev
 
 cd /etc/nginx/sites-enabled
 sudo rm default

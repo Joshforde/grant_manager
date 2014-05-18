@@ -25,3 +25,4 @@ requires => "common::sense" => "0";
 requires => "Mojolicious::Plugin::Gravatar" => "0";
 requires => "WWW::LinkedIn" => "0";
 requires => "LWP::Simple" => "0";
+requires => "XML::Simple" => "0";
