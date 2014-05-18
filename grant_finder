@@ -77,8 +77,8 @@ post '/co' => sub {
 	# get company details by NZBN
 	# my $path = '/data/app/ws/rest/companies/entity/v2.0/9429036269723';
 
-	my $access_key ='ynmLdWMFaXQaY2wV';
-	my $secret_auth_key ='7VSn8PUzyTFz5Dr46EBRBpvsLZdUjn6gSnP0fLgi';
+	my $access_key = $config->{business}->{key};
+	my $secret_auth_key = $config->{business}->{secret};
 	my $timestamp = time2str(time);
     
 	my $string_to_sign = "GET\n$host\n$path\n$timestamp\n$access_key\n$accept\n";

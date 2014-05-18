@@ -12,7 +12,7 @@
         <form class="form-horizontal well" method="post">
             <fieldset>
                 <div class="control-group">
-                    <label class="control-label" for="name">Name</label>
+                    <label class="control-label" for="name">Name or NZBN</label>
                     <div class="controls">
                         <input type="text" class="span4" name="company_name" placeholder="Name, NZBN, CO Number, ..." name="industry">
                     </div>
@@ -25,7 +25,14 @@
         </form>
         </p>
 		<p>
-			<%= dumper $company_information %>
+            <% if($company_information){ %>
+                <% foreach my $c (@{$company_information->{companies}->{company}}){ %>
+                    <br>Name: <%= $c->{companyName}  %>
+                    <br>Number: <%= $c->{companyNumber} %>
+                    <br>incorporated: <%= $c->{incorporationDate} %>
+                    <hr />
+                <% } %>
+            <% } %>
 		</p>
 		
     </div>
