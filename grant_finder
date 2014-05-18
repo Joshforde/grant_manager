@@ -28,6 +28,12 @@ plugin 'gravatar', {
         'http://startup-platform.com/img/placeholder.jpeg' # default was not value
 };
 
+my $couch = Store::CouchDB->new(
+    port  => $config->{couch}->{port},
+    db    => $config->{couch}->{db},
+    debug => 1
+);
+
 # replace 'CouchAuth' with this to have facebook auth:
 #plugin 'FacebookAuth', $config->{facebook};
 
@@ -36,6 +42,7 @@ plugin 'gravatar', {
 
 get '/' => sub {
     my $self = shift;
+
     $self->render('index');
 };
 
@@ -209,7 +216,7 @@ group {
         my $token;
         my $profile;
         my $li = WWW::LinkedIn->new(
-            consumer_key => $self->{app}->{config}->{linkedin}->{key},
+            consumer_key    => $self->{app}->{config}->{linkedin}->{key},
             consumer_secret => $self->{app}->{config}->{linkedin}->{secret},
         );
         if ($self->session->{request_token}) {
@@ -220,7 +227,8 @@ group {
             );
             $profile = XMLin($profile_xml);
             print Dumper($profile);
-        } else {
+        }
+        else {
             $token = $li->get_request_token(
                 callback => "http://192.168.33.30/linkedin/");
 
@@ -252,20 +260,42 @@ group {
     get '/starting-out' => sub {
         my $self = shift;
 
+        my $industries = $couch->get_view(
+            { view => 'data/industries', opts => { group => 'true' } });
+        $self->stash(locations => undef, industries => $industries, industry => undef);
+
+    } => 'starting-out';
+
+    post '/starting-out' => sub {
+        my $self = shift;
+
+        my $industry   = $self->param('industry');
+        my $industries = $couch->get_view(
+            { view => 'data/industries', opts => { group => 'true' } });
+
+        my $locations = $couch->get_array_view({
+                view => 'data/industry_by_region',
+                opts => {
+                    start_key  => [ $industry, "z" ],
+                    end_key    => [ $industry, 0 ],
+                    descending => 'true'
+                } });
+        $self->stash(locations => $locations, industries => $industries, industry => $industry);
+
     } => 'starting-out';
 
     get '/linkedin' => sub {
         my $self = shift;
-        my $li = WWW::LinkedIn->new(
-            consumer_key => $self->{app}->{config}->{linkedin}->{key},
+        my $li   = WWW::LinkedIn->new(
+            consumer_key    => $self->{app}->{config}->{linkedin}->{key},
             consumer_secret => $self->{app}->{config}->{linkedin}->{secret},
         );
         my $access_token = $li->get_access_token(
-            verifier => $self->param('oauth_verifier'),
-            request_token => $self->session->{request_token},
+            verifier             => $self->param('oauth_verifier'),
+            request_token        => $self->session->{request_token},
             request_token_secret => $self->session->{request_token_secret},
         );
-        
+
         $self->session->{linkedin} = $access_token;
         $self->redirect_to('/dashboard');
     };
