@@ -2,6 +2,7 @@
 use Mojolicious::Lite;
 use Data::Dumper;
 use WWW::LinkedIn;
+use XML::Simple;
 
 my $config = plugin Config => {
     file      => 'etc/grant_finder.conf',
@@ -172,11 +173,20 @@ group {
         print Dumper($self->{app}->{config});
 
         my $token;
-        unless ($self->session->{request_token}) {
-            my $li = WWW::LinkedIn->new(
-                consumer_key => $self->{app}->{config}->{linkedin}->{key},
-                consumer_secret => $self->{app}->{config}->{linkedin}->{secret},
+        my $profile;
+        my $li = WWW::LinkedIn->new(
+            consumer_key => $self->{app}->{config}->{linkedin}->{key},
+            consumer_secret => $self->{app}->{config}->{linkedin}->{secret},
+        );
+        if ($self->session->{request_token}) {
+            my $profile_xml = $li->request(
+                request_url         => 'https://api.linkedin.com/v1/people/~',
+                access_token        => $self->session->{linkedin}->{token},
+                access_token_secret => $self->session->{linkedin}->{secret},
             );
+            $profile = XMLin($profile_xml);
+            print Dumper($profile);
+        } else {
             $token = $li->get_request_token(
                 callback => "http://192.168.33.30/linkedin/");
 
@@ -184,7 +194,7 @@ group {
             $self->session->{request_token}        = $token->{token};
             $self->session->{request_token_secret} = $token->{secret};
         }
-        $self->stash(token => $token);
+        $self->stash(token => $token, profile => $profile);
     };
 
     get '/profile' => sub {

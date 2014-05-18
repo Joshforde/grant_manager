@@ -24,3 +24,4 @@ requires => "WebService::Rackspace::CloudFiles" => "0";
 requires => "common::sense" => "0";
 requires => "Mojolicious::Plugin::Gravatar" => "0";
 requires => "WWW::LinkedIn" => "0";
+requires => "XML::Simple" => "0";
