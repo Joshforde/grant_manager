@@ -2,6 +2,10 @@
 use Mojolicious::Lite;
 use Data::Dumper;
 use WWW::LinkedIn;
+use LWP::UserAgent;
+use HTTP::Date;
+use Digest::SHA qw(hmac_sha256_base64);
+use MIME::Base64;
 
 my $config = plugin Config => {
     file      => 'etc/grant_finder.conf',
@@ -33,6 +37,36 @@ get '/' => sub {
     my $self = shift;
     $self->render('index');
 };
+
+get '/co' => sub {
+    my $self = shift;
+
+	my $accept = 'application/json';
+	my $host = 'www.eat.business.govt.nz';
+	my $path = '/data/app/ws/rest/companies/entity/search/v2.0/NIU';
+	my $access_key ='ynmLdWMFaXQaY2wV';
+	my $secret_auth_key ='7VSn8PUzyTFz5Dr46EBRBpvsLZdUjn6gSnP0fLgi';
+	my $timestamp = time2str(time);
+    
+	my $string_to_sign = "GET\n$host\n$path\n$timestamp\n$access_key\n$accept\n";
+	
+	my $signature = hmac_sha256_base64( $string_to_sign, $secret_auth_key)."=";
+	print Dumper $signature;
+
+    my $browser = LWP::UserAgent->new;
+	my @headers = (
+		'Date' => "$timestamp",
+		'Accept' => "$accept",
+		'Authorization' => "$access_key:$signature",
+	);
+    my $response = $browser->get("http://$host$path", @headers);	
+	
+    print Dumper $response;
+
+	#    print Dumper $self;
+    
+} => 'co';
+
 
 ### login handling ###
 get '/login' => sub {
