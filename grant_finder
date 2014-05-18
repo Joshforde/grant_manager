@@ -7,6 +7,7 @@ use HTTP::Date;
 use Digest::SHA qw(hmac_sha256_base64);
 use MIME::Base64;
 use XML::Simple;
+use JSON;
 
 my $config = plugin Config => {
     file      => 'etc/grant_finder.conf',
@@ -48,10 +49,34 @@ get '/' => sub {
 
 get '/co' => sub {
     my $self = shift;
+	#    print Dumper $self;
+    
+		$self->stash(company_information => undef);
+
+		
+} => 'co';
+
+post '/co' => sub {
+    my $self = shift;
+	
+	my $name = $self->param('company_name');
+	print Dumper $name;
 
 	my $accept = 'application/json';
 	my $host = 'www.eat.business.govt.nz';
-	my $path = '/data/app/ws/rest/companies/entity/search/v2.0/NIU';
+	
+	# search by company name/number/NZBN
+	my $path = '/data/app/ws/rest/companies/entity/search/v2.0/' . $self->param('company_name');
+	
+	# get company details by company number
+	# my $path = '/data/app/ws/rest/companies/entity/v2.0/1277262';
+
+	# search for people/shareholders
+	# my $path = '/data/app/ws/rest/companies/role/search/v1.0/niu';
+	
+	# get company details by NZBN
+	# my $path = '/data/app/ws/rest/companies/entity/v2.0/9429036269723';
+
 	my $access_key ='ynmLdWMFaXQaY2wV';
 	my $secret_auth_key ='7VSn8PUzyTFz5Dr46EBRBpvsLZdUjn6gSnP0fLgi';
 	my $timestamp = time2str(time);
@@ -69,12 +94,12 @@ get '/co' => sub {
 	);
     my $response = $browser->get("http://$host$path", @headers);	
 	
+	$self->stash(company_information => from_json($response->content));
+	
     print Dumper $response;
 
-	#    print Dumper $self;
-    
-} => 'co';
 
+} => 'co';
 
 ### login handling ###
 get '/login' => sub {

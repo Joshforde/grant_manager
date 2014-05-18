@@ -1,2 +1,33 @@
 % layout 'default';
 % title 'Dashboard';
+     
+<div class="row">
+    <div class="span2">
+        <h1>Search company</h1>
+    </div>
+    <div class="span6 offset1">
+        <p>
+        Please enter the name, NZBN or Companies Office number you want to search for:
+
+        <form class="form-horizontal well" method="post">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" class="span4" name="company_name" placeholder="Name, NZBN, CO Number, ..." name="industry">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="reset" class="btn">cancel</button>
+                    <button type="submit" class="btn btn-success">Search</button>
+                </div>
+            </fieldset>
+        </form>
+        </p>
+		<p>
+			<%= dumper $company_information %>
+		</p>
+		
+    </div>
+</div>
+
