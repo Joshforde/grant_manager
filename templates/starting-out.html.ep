@@ -23,7 +23,7 @@
                     <label class="control-label" for="name">Industry</label>
                     <div class="controls">
                         <select id="industry" name="industry">
-                            <% foreach my $industry (keys %$industries){ %>
+                            <% foreach my $industry (sort keys %$industries){ %>
                             <option><%= $industry %></option>
                             <% } %>
                         </select>
